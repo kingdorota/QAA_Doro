@@ -1,0 +1,46 @@
+Feature: Product Search and Purchase on MyBasic.pl
+
+  Scenario: Successful product search and purchase
+    Given I am on the homepage of MyBasic.pl
+    When I search for a product "T-shirt"
+    Then I should see a list of search results related to "T-shirt"
+    And I select the first product from the search results
+    Then I should see the product details page
+    When I add the product to the cart
+    Then the product should be added to the cart
+    When I view the cart
+    Then I should see the product in the cart
+    And the product quantity should be 1
+    When I proceed to checkout
+    And I enter my shipping details
+      | name          | John Doe      |
+      | address       | 123 Main St   |
+      | city          | Warsaw        |
+      | postal code   | 00-001        |
+      | phone         | 123456789     |
+      | email         | john@example.com |
+    And I select the payment method "Credit Card"
+    And I enter my payment details
+      | card number   | 4111111111111111 |
+      | expiry date   | 12/25           |
+      | CVV           | 123             |
+    And I confirm the purchase
+    Then I should see a confirmation message "Thank you for your purchase!"
+    And I should receive a confirmation email at "john@example.com"
+
+  Scenario: Unsuccessful product search
+    Given I am on the homepage of MyBasic.pl
+    When I search for a product "NonExistentProduct"
+    Then I should see a message "No products found for 'NonExistentProduct'"
+
+  Scenario: Validating cart contents before purchase
+    Given I have added products to my cart
+      | product      | quantity |
+      | T-shirt      | 2        |
+      | Jeans        | 1        |
+    When I view the cart
+    Then I should see the following products in the cart
+      | product      | quantity |
+      | T-shirt      | 2        |
+      | Jeans        | 1        |
+    And the total price should be calculated correctly
